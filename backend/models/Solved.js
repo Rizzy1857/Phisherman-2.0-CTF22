@@ -1,22 +1,23 @@
 import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
-const blogSchema = new Schema({
-    name:String,
+const solvedSchema = new Schema({
+    name: String,
     email: {
         type: String,
         unique: true,
         required: true,
-        trim: true
+        trim: true,
+        lowercase: true
     },
-    points:String,
-    flag1:String,
-    flag2:String,
-    flag3:String,
-    flag4:String,
-    score:String,
-    flagtime:String,
-    avatar:String
+    score: { type: Number, default: 0 },
+    solves: { type: Number, default: 0 },
+    flag1: { type: String, default: "" },
+    flag2: { type: String, default: "" },
+    flag3: { type: String, default: "" },
+    flag4: { type: String, default: "" },
+    flag5: { type: String, default: "" },
+    lastSolveTime: String
 });
 
-export const Solved = mongoose.model('Solved', blogSchema)
+export const Solved = mongoose.model('Solved', solvedSchema)

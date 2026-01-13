@@ -108,9 +108,18 @@ const createUser = async (email, name) => {
   };
   
   if (USE_MEMORY_DB) {
+    // Check if user already exists in memory
+    const existing = memoryUsers.find(u => u.email === email.toLowerCase());
+    if (existing) return existing;
     memoryUsers.push(userData);
   } else {
-    await Solved.create(userData);
+    // Use findOneAndUpdate with upsert to prevent duplicates
+    const user = await Solved.findOneAndUpdate(
+      { email: email.toLowerCase() },
+      { $setOnInsert: userData },
+      { upsert: true, new: true }
+    );
+    return user;
   }
   return userData;
 };
@@ -156,11 +165,14 @@ app.post('/solved', authenticateToken, async (req, res) => {
     return res.status(404).json({ success: false, message: "User not found" });
   }
 
+  // Admin gets all levels unlocked
+  const isAdmin = req.userEmail.includes('admin');
+  
   const solvedArray = [];
   const levelUnlocks = [];
   
   for (let i = 0; i < 4; i++) {
-    const isSolved = user[`flag${i + 1}`] === "SOLVED";
+    const isSolved = isAdmin || user[`flag${i + 1}`] === "SOLVED";
     if (isSolved) {
       solvedArray.push(i);
     }
@@ -263,13 +275,16 @@ app.post('/check-level2', authenticateToken, async (req, res) => {
 app.post('/scoreboard', async (req, res) => {
   const users = await findAllUsers();
   
+  // Filter out admin users from scoreboard
+  const filteredUsers = users.filter(u => !u.email.includes('admin'));
+  
   const toSeconds = (time) => {
     if (!time) return Infinity;
     const [h, m, s = 0] = String(time).split(":").map(Number);
     return h * 3600 + m * 60 + s;
   };
 
-  const sorted = [...users].sort((a, b) => {
+  const sorted = [...filteredUsers].sort((a, b) => {
     const scoreA = parseInt(a.score) || 0;
     const scoreB = parseInt(b.score) || 0;
     if (scoreB !== scoreA) return scoreB - scoreA;
