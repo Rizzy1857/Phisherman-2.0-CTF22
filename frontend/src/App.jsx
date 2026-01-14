@@ -11,6 +11,7 @@ import Login from './Components/Login'
 import Logout from './Components/Logout'
 import Loading from './Components/Loading'
 import Transmission from './Components/Transmission'
+import Register from './Components/Register'
 import { useEffect, useState } from 'react'
 import config from './config'
 
@@ -104,6 +105,10 @@ function App() {
     {
       path: '/login',
       element: <><Navbar points={info.score} username={info.name} /><Login /></>
+    },
+    {
+      path: '/register',
+      element: <><Navbar points={info.score} username={info.name} /><Register /></>
     },
     {
       path: '/unavailable',

@@ -17,7 +17,7 @@ dotenv.config();
 
 const app = express()
 const PORT = process.env.PORT || 3000
-const secretKey = process.env.JWT_SECRET;
+const secretKey = process.env.JWT_SECRET || "default_development_secret_do_not_use_in_prod";
 const DB_URL = process.env.ATLAS_URL;
 
 let USE_MEMORY_DB = false;
@@ -505,6 +505,41 @@ app.post('/scoreboard', async (req, res) => {
     players: users.length,
     total_solves: collections.reduce((sum, u) => sum + (parseInt(u.solves) || 0), 0)
   });
+});
+
+// Register
+app.post('/register', async (req, res) => {
+  const { email, password, name } = req.body;
+
+  if (!email || !password || !name) {
+    return res.status(400).json({ success: false, message: "All fields are required" });
+  }
+
+  // Check if user already exists
+  const existingUser = await findUser(email);
+  if (existingUser) {
+    return res.status(400).json({ success: false, message: "User already exists" });
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create basic user structure using helper
+    await createUser(email, name);
+
+    // Update with password
+    if (USE_MEMORY_DB) {
+      const u = memoryUsers.find(u => u.email === email.toLowerCase());
+      if (u) u.password = hashedPassword;
+    } else {
+      await Solved.updateOne({ email: email.toLowerCase() }, { $set: { password: hashedPassword } });
+    }
+
+    res.json({ success: true, message: "Registration successful" });
+  } catch (error) {
+    console.error("Registration error:", error);
+    res.status(500).json({ success: false, message: "Server error during registration" });
+  }
 });
 
 // Login
