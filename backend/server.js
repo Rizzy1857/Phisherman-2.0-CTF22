@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 
 const app = express()
-const port = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000
 const secretKey = process.env.JWT_SECRET;
 const DB_URL = process.env.ATLAS_URL;
 
@@ -565,8 +565,8 @@ app.post('/unavailable', (req, res) => {
   res.json({ success: totalMinutes >= 735 });
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
   console.log(`[STARTUP] DB Mode: ${USE_MEMORY_DB ? "IN-MEMORY (Resets on restart)" : "MONGODB (Persistent)"}`);
   console.log(`[STARTUP] Level 1 Ch 4 Flag (ID 3): ${CHALLENGES[3].flag}`);
   console.log(`[STARTUP] Level 4 Flag: ${LEVEL4_FLAG}`);
