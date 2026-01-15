@@ -171,16 +171,24 @@ connectDB();
 // ==================== MIDDLEWARE ====================
 app.use(cors({
   origin: function (origin, callback) {
-    const allowed = ["http://localhost:5173", "http://localhost:5174"];
+    const allowed = [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "https://phisherman-2-0-ctf-22.vercel.app" // User's Vercel App
+    ];
     // Add production URL from env
     if (process.env.FRONTEND_URL) {
       allowed.push(process.env.FRONTEND_URL);
     }
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
+
+    // Allow all vercel.app subdomains for easier deployment debugging
+    if (origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+
     if (allowed.indexOf(origin) === -1) {
-      // In production, we might want to block. For CTF simplicity, maybe allow all?
-      // Sticking to specific origins is safer.
       return callback(new Error('The CORS policy for this site does not allow access from the specified Origin.'), false);
     }
     return callback(null, true);
