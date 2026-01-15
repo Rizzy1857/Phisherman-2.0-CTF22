@@ -21,8 +21,7 @@ const solvedSchema = new Schema({
     flag7: { type: String, default: "" },
     lastSolveTime: String,
     password: { type: String },
-    isAdmin: { type: Boolean, default: false },
-    level2Hints: { type: [Number], default: [] }
+    isAdmin: { type: Boolean, default: false }
 });
 
 export const Solved = mongoose.model('Solved', solvedSchema)

@@ -55,7 +55,7 @@ These challenges are accessed via the **Flags** dashboard.
     2.  Use SQL Injection in the email field: `' OR 1=1 --`
     3.  Password can be anything.
     4.  *(Note: For this CTF simulation, the flag is hardcoded or provided upon successful "simulated" detection, but in the real Juice Shop, this logs you in as Admin).*
-*   **Flag Logic**: The frontend accepts `PHISH{...}` format.
+*   **Flag**: `PHISH{juice_shop_sql_master}`
 
 ---
 

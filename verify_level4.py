@@ -1,7 +1,7 @@
 import requests
 import json
 
-BASE_URL = "http://localhost:3000"
+BASE_URL = "http://127.0.0.1:3000"
 LOGIN_URL = f"{BASE_URL}/login"
 SOLVE_URL = f"{BASE_URL}/solve-level4"
 
@@ -24,6 +24,8 @@ def verify_level4():
     print("[-] Resetting debug user...")
     try:
         res = session.get(f"{BASE_URL}/debug-reset")
+        print(f"[-] Reset Status: {res.status_code}")
+        print(f"[-] Reset Headers: {res.headers}")
         print(f"[-] Reset Response: {res.text}")
     except:
         pass

@@ -4,11 +4,14 @@ import { Solved } from './models/Solved.js';
 
 dotenv.config();
 
+import bcrypt from 'bcryptjs';
+
 const users = [
   {
     email: "admin@phisherman.ctf",
     name: "Admin",
     avatar: "AD",
+    isAdmin: true,
     points: "0",
     score: "0",
     flag1: "",
@@ -76,6 +79,54 @@ const users = [
     flag3: "",
     flag4: "",
     flagtime: ""
+  },
+  {
+    email: "nakulkrishna2021@gmail.com",
+    name: "nakul_krishna",
+    avatar: "NK",
+    points: "0",
+    score: "0",
+    flag1: "",
+    flag2: "",
+    flag3: "",
+    flag4: "",
+    flagtime: ""
+  },
+  {
+    email: "npadaveettil@gmail.com",
+    name: "nivin0530",
+    avatar: "NV",
+    points: "0",
+    score: "0",
+    flag1: "",
+    flag2: "",
+    flag3: "",
+    flag4: "",
+    flagtime: ""
+  },
+  {
+    email: "vishnu07hari@gmail.com",
+    name: "vishnuvichu77",
+    avatar: "VV",
+    points: "0",
+    score: "0",
+    flag1: "",
+    flag2: "",
+    flag3: "",
+    flag4: "",
+    flagtime: ""
+  },
+  {
+    email: "swaroopkrishnanm06@gmail.com",
+    name: "godkira10",
+    avatar: "GK",
+    points: "0",
+    score: "0",
+    flag1: "",
+    flag2: "",
+    flag3: "",
+    flag4: "",
+    flagtime: ""
   }
 ];
 
@@ -89,14 +140,21 @@ async function seedDatabase() {
     await Solved.deleteMany({});
 
     console.log('👥 Adding users...');
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash("password123", salt);
+
     for (const user of users) {
-      await Solved.create(user);
+      const userWithPassword = {
+        ...user,
+        password: hashedPassword
+      };
+      await Solved.create(userWithPassword);
       console.log(`   ✅ Added: ${user.name} (${user.email})`);
     }
 
-    console.log('\n🎉 Database seeded successfully!');
+    console.log('\n🎉 Database seeded successfully with default password: password123');
     console.log(`   Total users: ${users.length}`);
-    
+
     process.exit(0);
   } catch (error) {
     console.error('❌ Error seeding database:', error.message);

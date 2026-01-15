@@ -16,8 +16,12 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 
 const app = express()
+app.use(cors({
+  origin: process.env.FRONTEND_URL || '*', // Allow Vercel frontend
+  credentials: true
+}));
 const PORT = process.env.PORT || 3000
-const secretKey = process.env.JWT_SECRET || "default_development_secret_do_not_use_in_prod";
+const secretKey = process.env.JWT_SECRET;
 const DB_URL = process.env.ATLAS_URL;
 
 let USE_MEMORY_DB = false;
@@ -33,20 +37,20 @@ let memoryUsers = [];
 // ==================== CHALLENGES (from .env) ====================
 const CHALLENGES = [
   { id: 0, flag: "Hello_CTF_Player{1m_a_bAs64_exp3rt}", points: 100 },
-  { id: 1, flag: "CTF{sql_1nj3ct10n_m4st3r_2024}", points: 500 },
-  { id: 2, flag: "CTF{r3v3rs3_mast3r}", points: 300 },
-  { id: 3, flag: "CTF{network_forensics_pro}", points: 450 }
+  { id: 1, flag: "CTF{sql_1nj3ct10n_m4st3r_2024}", points: 200 },
+  { id: 2, flag: "CTF{r3v3rs3_mast3r}", points: 250 },
+  { id: 3, flag: "CTF{network_forensics_pro}", points: 250 }
 ];
 
 const LEVEL2_CHALLENGE = {
   id: 0,
   title: "SQL Injection - Juice Shop",
-  basePoints: parseInt(process.env.LEVEL2_BASE_POINTS) || 100,
+  basePoints: parseInt(process.env.LEVEL2_BASE_POINTS) || 300,
   flag: process.env.LEVEL2_FLAG || ""
 };
 
 const LEVEL3_FLAG = "PHISH{R3v_Eng_W1n}";
-const LEVEL3_POINTS = 200;
+const LEVEL3_POINTS = 400;
 
 // ==================== RATE LIMITING ====================
 const loginLimiter = rateLimit({
@@ -107,39 +111,6 @@ const updateUser = async (email, updates) => {
   }
   await Solved.updateOne({ email: email.toLowerCase() }, { $set: updates });
   return true;
-};
-
-const createUser = async (email, name) => {
-  const userData = {
-    email: email.toLowerCase(),
-    name,
-    score: 0,
-    solves: 0,
-    flag1: "",
-    flag2: "",
-    flag3: "",
-    flag4: "",
-    flag5: "",
-    flag6: "",
-    flag7: "",
-    lastSolveTime: null
-  };
-
-  if (USE_MEMORY_DB) {
-    // Check if user already exists in memory
-    const existing = memoryUsers.find(u => u.email === email.toLowerCase());
-    if (existing) return existing;
-    memoryUsers.push(userData);
-  } else {
-    // Use findOneAndUpdate with upsert to prevent duplicates
-    const user = await Solved.findOneAndUpdate(
-      { email: email.toLowerCase() },
-      { $setOnInsert: userData },
-      { upsert: true, new: true }
-    );
-    return user;
-  }
-  return userData;
 };
 
 // ==================== DATABASE CONNECTION ====================
@@ -252,8 +223,18 @@ app.get('/download/:filename', (req, res) => {
   });
 });
 
+
+app.get("/profile", (req, res) => {
+  console.log(req.cookies);          // all cookies
+  console.log(req.cookies.token);    // specific cookie
+
+  res.send("Cookie read successfully");
+});
+
+
 // Get user progress
 app.get('/debug-reset', async (req, res) => {
+  console.log("[DEBUG] /debug-reset called");
   const email = "nivednarayananm2@gmail.com";
   const hashedPassword = await bcrypt.hash("password123", 10);
   await updateUser(email, { password: hashedPassword });
@@ -469,7 +450,7 @@ app.post('/check-level2', authenticateToken, async (req, res) => {
   if (!user) {
     return res.status(404).json({ success: false, message: "User not found" });
   }
-  res.json({ success: true, solved: user.flag5 === "SOLVED" });
+  res.json({ success: true, solved: user.isAdmin === true || user.flag5 === "SOLVED" });
 });
 
 // Scoreboard
@@ -477,7 +458,7 @@ app.post('/scoreboard', async (req, res) => {
   const users = await findAllUsers();
 
   // Filter out admin users from scoreboard
-  const filteredUsers = users.filter(u => !u.email.includes('admin'));
+  const filteredUsers = users.filter(u => !u.isAdmin && !u.email.includes('admin'));
 
   const toSeconds = (time) => {
     if (!time) return Infinity;
@@ -507,41 +488,6 @@ app.post('/scoreboard', async (req, res) => {
   });
 });
 
-// Register
-app.post('/register', async (req, res) => {
-  const { email, password, name } = req.body;
-
-  if (!email || !password || !name) {
-    return res.status(400).json({ success: false, message: "All fields are required" });
-  }
-
-  // Check if user already exists
-  const existingUser = await findUser(email);
-  if (existingUser) {
-    return res.status(400).json({ success: false, message: "User already exists" });
-  }
-
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create basic user structure using helper
-    await createUser(email, name);
-
-    // Update with password
-    if (USE_MEMORY_DB) {
-      const u = memoryUsers.find(u => u.email === email.toLowerCase());
-      if (u) u.password = hashedPassword;
-    } else {
-      await Solved.updateOne({ email: email.toLowerCase() }, { $set: { password: hashedPassword } });
-    }
-
-    res.json({ success: true, message: "Registration successful" });
-  } catch (error) {
-    console.error("Registration error:", error);
-    res.status(500).json({ success: false, message: "Server error during registration" });
-  }
-});
-
 // Login
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
@@ -552,35 +498,44 @@ app.post('/login', async (req, res) => {
 
   // Check DB First
   let user = await findUser(email);
+  if (user) {
+    console.log(`[DEBUG] Login: Email='${email}', Pwd='${password}'`);
+    console.log(`[DEBUG] DB User: Email='${user.email}', Pwd='${user.password}'`);
+    if (user.email == email) {
+      console.log("[DEBUG] Email matched");
+      const isMatch = await bcrypt.compare(password, user.password);
+      console.log(`[DEBUG] Password match result: ${isMatch}`);
+      if (isMatch) {
+        const token = jwt.sign({ email: user.email }, secretKey, { expiresIn: '7d' });
+        res.cookie("token", token, { maxAge: 1000 * 60 * 60 * 24 * 7, httpOnly: true, secure: false, sameSite: "lax" });
+        res.cookie("email", user.email, { maxAge: 1000 * 60 * 60 * 24 * 7, httpOnly: true, secure: false, sameSite: "lax" });
+        return res.status(200).json({ success: true, message: "Authenticated" });
+      }
+      else {
+        return res.status(401).json({ success: false, message: "password is not correct" });
+      }
 
-  // If user exists in DB
-  if (user && user.password) {
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) {
-      return res.status(401).json({ success: false, message: "Invalid password" });
     }
-  } else {
-    // Fallback for non-migrated users or if DB failure (though we prefer DB)
-    // Or if user exists but has no password (shouldn't happen with seeding)
-    // Let's rely strictly on DB for security as requested "rework"
+  }
+  else {
     return res.status(401).json({ success: false, message: "Invalid credentials" });
   }
-
-  const token = jwt.sign({ email: email.toLowerCase() }, secretKey, { expiresIn: '7d' });
-  res.cookie("token", token, {
-    maxAge: 1000 * 60 * 60 * 24 * 7,
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax"
-  });
 
   res.json({ success: true, name: user.name, isAdmin: user.isAdmin });
 });
 
 // Logout
 app.post('/logout', (req, res) => {
-  res.clearCookie("token", { httpOnly: true, sameSite: "lax" });
-  res.json({ success: true });
+  res.clearCookie("token", {
+    secure: true,
+    sameSite: "none"
+  });
+  res.clearCookie("email", {
+    secure: true,
+    sameSite: "none"
+  });
+
+  res.json({ success: true, message: "Logged out" });
 });
 
 // Check login status
@@ -598,6 +553,12 @@ app.post('/unavailable', (req, res) => {
   const now = new Date();
   const totalMinutes = now.getHours() * 60 + now.getMinutes();
   res.json({ success: totalMinutes >= 735 });
+});
+
+// ==================== DEPLOYMENT: SPLIT (Backend Only) ====================
+// Static file serving removed for split deployment (Render + Vercel)
+app.get('/', (req, res) => {
+  res.json({ message: "Phisherman Backend is Running! 🚀" });
 });
 
 app.listen(PORT, () => {

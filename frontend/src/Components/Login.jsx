@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, User, Mail, Lock, Terminal, Eye, EyeOff, ChevronRight, Sparkles, Code, Zap } from 'lucide-react';
 import '../styles/Login.css';
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 const Login = () => {
@@ -222,12 +222,6 @@ const Login = () => {
                 )}
                 <div className="button-glow"></div>
               </button>
-
-              <div style={{ marginTop: '1rem', textAlign: 'center' }}>
-                <Link to="/register" style={{ color: '#4facfe', textDecoration: 'none', fontSize: '0.9rem' }}>
-                  Need an account? Register
-                </Link>
-              </div>
 
               {/* Additional Info */}
               <div className="form-footer">

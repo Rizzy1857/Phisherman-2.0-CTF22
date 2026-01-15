@@ -74,7 +74,7 @@ const Levels = ({ leveling }) => {
       title: "Level 1 - Foundations",
       category: "mixed",
       difficulty: "Easy-Medium",
-      points: "100-500",
+      points: "100-250",
       totalChallenges: 4,
       locked: false,  // Level 1 always unlocked
       completed: level1Complete,
@@ -87,7 +87,7 @@ const Levels = ({ leveling }) => {
       title: "Level 2 - SQL Injection",
       category: "web",
       difficulty: "Medium",
-      points: "100",
+      points: "300",
       totalChallenges: 1,
       locked: !level1Complete && !isAdmin,  // Unlocks after Level 1 OR if admin
       completed: level2Complete,
@@ -100,7 +100,7 @@ const Levels = ({ leveling }) => {
       title: "Level 3 - Reverse Engineering",
       category: "advanced",
       difficulty: "Hard",
-      points: "200",
+      points: "400",
       totalChallenges: 1,
       locked: !level2Complete && !isAdmin, // Unlocks after Level 2
       completed: leveling[5] || false,     // Assuming solved[5] is flag6. Wait. 'leveling' logic.
