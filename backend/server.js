@@ -118,6 +118,7 @@ const connectDB = async () => {
   if (!DB_URL) {
     console.warn("⚠️  ATLAS_URL is undefined - Using in-memory database");
     USE_MEMORY_DB = true;
+    await seedDefaultAdmin();
     return;
   }
 
@@ -128,7 +129,27 @@ const connectDB = async () => {
   } catch (error) {
     console.warn("⚠️  MongoDB connection failed - Using in-memory database");
     USE_MEMORY_DB = true;
+    await seedDefaultAdmin();
   }
+};
+
+const seedDefaultAdmin = async () => {
+  console.log("⚠️ Seeding In-Memory Admin User (Fallback mode)");
+  const hashedPassword = await bcrypt.hash("password123", 10);
+  const adminUser = {
+    email: "admin@phisherman.ctf",
+    name: "Admin (Memory)",
+    password: hashedPassword,
+    isAdmin: true,
+    score: 0,
+    solves: 0,
+    flag1: "", flag2: "", flag3: "", flag4: "", flag5: "", flag6: "", flag7: ""
+  };
+
+  if (USE_MEMORY_DB) {
+    memoryUsers.push(adminUser);
+  }
+  console.log("✅ In-Memory Admin created: admin@phisherman.ctf / password123");
 };
 
 const seedUsers = async () => {
