@@ -49,4 +49,7 @@ This guide covers deploying the **Backend to Render** and the **Frontend to Verc
 *   **CORS Errors**: If the frontend says "Network Error" or console shows CORS issues:
     *   Check if `server.js` on Render has `app.use(cors(...))` configured correctly.
     *   Make sure `FRONTEND_URL` env var on Render matches your Vercel domain (if you restricted it).
+*   **404 Not Found**:
+    *   **Did you set the Root Directory?**: Go to Vercel -> Settings -> General. Ensure **Root Directory** is set to `frontend`. If it's empty, Vercel deploys the root (which has no website), causing a 404.
+    *   **Output Directory**: Ensure it defaults to `dist` (Vite's default).
 *   **MongoDB Connection Error**: Check Render logs. Ensure your `ATLAS_URL` IP Access List allows access from ANYWHERE (`0.0.0.0/0`) since Render IPs change.
