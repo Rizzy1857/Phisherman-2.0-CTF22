@@ -10,6 +10,7 @@ const Levels = ({ leveling }) => {
   const [level1Complete, setLevel1Complete] = useState(false);
   const [level2Complete, setLevel2Complete] = useState(false);
   const [level3Complete, setLevel3Complete] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   // Check admin status and level completion
   useEffect(() => {
@@ -26,11 +27,14 @@ const Levels = ({ leveling }) => {
           if (response.username === "Admin") {
             setIsAdmin(true);
           }
+          setIsCheckingAuth(false);
         } else {
           navigate('/login');
         }
       } catch (err) {
         console.error("Fetch failed:", err);
+        // Fail safe: Redirect to login on error (e.g. 401, Network Error)
+        navigate('/login');
       }
     }
 
@@ -158,6 +162,15 @@ const Levels = ({ leveling }) => {
     }
     setSelectedLevel(null);
   };
+
+  if (isCheckingAuth) {
+    return (
+      <div className="ctf-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div className="loading-spinner"></div>
+        <p style={{ marginLeft: '1rem', color: '#00ff41' }}>Verifying Credentials...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="ctf-container">
