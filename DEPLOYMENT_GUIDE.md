@@ -11,6 +11,7 @@ This guide covers deploying the **Backend to Render** and the **Frontend to Verc
 5.  **Configuration**:
     *   **Name**: `cyber-security-challenge` (or similar).
     *   **Runtime**: `Node`.
+    *   **Root Directory**: Leave this **EMPTY**. (Render defaults to the repo root. If you set this to 'backend', the build command will fail).
     *   **Build Command**: `cd backend && npm install` (matches `render.yaml`).
     *   **Start Command**: `cd backend && node server.js` (matches `render.yaml`).
 6.  **Environment Variables**:
