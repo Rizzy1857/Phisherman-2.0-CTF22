@@ -27,6 +27,7 @@ function App() {
 
 
   useEffect(() => {
+    console.log("🚀 [DEBUG] Current API URL:", config.API_BASE_URL);
     async function solves() {
       const interval = setInterval(async () => {
         try {
