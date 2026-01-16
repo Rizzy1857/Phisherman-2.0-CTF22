@@ -9,7 +9,7 @@ ANALYST: Agent 47
 SITUATION:
 ----------
 We intercepted suspicious network traffic from a known 
-threat actor. The message appears to be encrypted using
+threat actor Agent X. The message appears to be encrypted using
 a simple cipher.
 
 INTERCEPTED PACKET DATA:
