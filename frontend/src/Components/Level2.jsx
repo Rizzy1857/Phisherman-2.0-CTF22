@@ -40,7 +40,10 @@ const Level2 = ({ userInfo, level2Solved }) => {
         const res = await fetch(`${config.API_BASE_URL}/checklogin`, {
           method: "POST",
           credentials: "include",
-          headers: { "Content-Type": "application/json" }
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem('token')}`
+          }
         });
         const response = await res.json();
         if (!response.success) {
@@ -65,7 +68,10 @@ const Level2 = ({ userInfo, level2Solved }) => {
     try {
       const res = await fetch(`${config.API_BASE_URL}/solve-level2`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
+        },
         credentials: "include",
         body: JSON.stringify({
           flag: inputValue.trim()

@@ -40,6 +40,9 @@ const Login = () => {
       const response = await res.json()
       await delay(1)
       if (response.success == true) {
+        if (response.token) {
+          localStorage.setItem('token', response.token);
+        }
         navigate('/')
       }
       else {

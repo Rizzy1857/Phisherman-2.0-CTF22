@@ -72,11 +72,21 @@ const generalLimiter = rateLimit({
 });
 
 // ==================== JWT MIDDLEWARE ====================
+// ==================== JWT MIDDLEWARE ====================
 const authenticateToken = (req, res, next) => {
-  const token = req.cookies.token;
+  // Check header first (Bearer <token>)
+  const authHeader = req.headers['authorization'];
+  let token = authHeader && authHeader.split(' ')[1];
+
+  // Fallback to cookie if no header token
+  if (!token) {
+    token = req.cookies.token;
+  }
+
   if (!token) {
     return res.status(401).json({ success: false, message: "Authentication required" });
   }
+
   jwt.verify(token, secretKey, (err, user) => {
     if (err) {
       return res.status(403).json({ success: false, message: "Invalid or expired token" });
@@ -577,7 +587,12 @@ app.post('/login', async (req, res) => {
           secure: true,
           sameSite: "none"
         });
-        return res.status(200).json({ success: true, message: "Authenticated" });
+        return res.status(200).json({
+          success: true,
+          message: "Authenticated",
+          token: token, // Send token to client for localStorage
+          user: { email: user.email, name: user.name, isAdmin: user.isAdmin }
+        });
       }
       else {
         return res.status(401).json({ success: false, message: "password is not correct" });

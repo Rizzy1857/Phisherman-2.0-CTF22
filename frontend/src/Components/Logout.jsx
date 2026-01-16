@@ -14,8 +14,9 @@ const Logout = () => {
             const data = await res.json();
             if (sessionStorage.getItem("shopReloaded")) {
                 sessionStorage.removeItem("shopReloaded");
-                window.location.reload();
             }
+            localStorage.removeItem("token");
+            window.location.reload();
             navigate("/");
         };
 

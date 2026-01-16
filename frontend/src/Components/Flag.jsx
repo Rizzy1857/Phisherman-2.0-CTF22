@@ -96,7 +96,8 @@ const Flag = ({ flags, points, score }) => {
       const res = await fetch(`${config.API_BASE_URL}/solve`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
         },
         credentials: "include",
         body: JSON.stringify({
@@ -142,7 +143,8 @@ const Flag = ({ flags, points, score }) => {
           method: "POST",
           credentials: "include",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem('token')}`
           }
         });
 
