@@ -149,6 +149,19 @@ const seedDefaultAdmin = async () => {
 
   if (USE_MEMORY_DB) {
     memoryUsers.push(adminUser);
+
+    // Seed Tester (Memory)
+    const testerHashed = await bcrypt.hash("password123", 10);
+    memoryUsers.push({
+      email: "tester@phisherman.ctf",
+      name: "Tester (Memory)",
+      password: testerHashed,
+      isAdmin: false,
+      score: 0,
+      solves: 0,
+      flag1: "", flag2: "", flag3: "", flag4: "", flag5: "", flag6: "", flag7: ""
+    });
+    console.log("✅ In-Memory Tester created: tester@phisherman.ctf / password123");
   }
   console.log("✅ In-Memory Admin created: admin@phisherman.ctf / password123");
 };
@@ -183,6 +196,21 @@ const seedUsers = async () => {
       }
     }
     console.log("✅ Users seeded/migrated successfully");
+
+    // Seed Tester (MongoDB)
+    const testerEmail = "tester@phisherman.ctf";
+    const existingTester = await Solved.findOne({ email: testerEmail });
+    if (!existingTester) {
+      const hashedTesterPass = await bcrypt.hash("password123", 10);
+      const newTester = new Solved({
+        email: testerEmail,
+        name: "Tester Account",
+        password: hashedTesterPass,
+        isAdmin: false
+      });
+      await newTester.save();
+      console.log("✅ Tester account created: tester@phisherman.ctf");
+    }
   } catch (error) {
     console.error("Error seeding users:", error);
   }
@@ -488,7 +516,7 @@ app.post('/scoreboard', async (req, res) => {
   const users = await findAllUsers();
 
   // Filter out admin users from scoreboard
-  const filteredUsers = users.filter(u => !u.isAdmin && !u.email.includes('admin'));
+  const filteredUsers = users.filter(u => !u.isAdmin && !u.email.includes('admin') && u.email !== 'tester@phisherman.ctf');
 
   const toSeconds = (time) => {
     if (!time) return Infinity;

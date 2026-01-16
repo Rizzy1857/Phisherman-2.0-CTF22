@@ -51,31 +51,6 @@ const Score = () => {
   }, [])
 
 
-  useEffect(() => {
-    async function checklogin() {
-
-      try {
-        const res = await fetch(`${config.API_BASE_URL}/unavailable`, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json"
-          }
-        });
-
-        const response = await res.json();
-        if (response.success == true) {
-          navigate('/scoreboard')
-        }
-        else {
-          navigate('/unavailable')
-        }
-      } catch (err) {
-        console.error("Fetch failed:", err);
-      }
-    }
-    checklogin()
-  }, [])
 
   return (
     <div className="scoreboard-container">
