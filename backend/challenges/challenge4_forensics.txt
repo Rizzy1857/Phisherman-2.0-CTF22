@@ -1,0 +1,33 @@
+================================================
+    NETWORK FORENSICS - INTERCEPTED COMMUNICATION
+================================================
+
+CASE FILE: #NF-2024-0042
+DATE: 2024-03-15
+ANALYST: Agent 47
+
+SITUATION:
+----------
+We intercepted suspicious network traffic from a known 
+threat actor. The message appears to be encrypted using
+a simple cipher.
+
+INTERCEPTED PACKET DATA:
+========================
+
+--- BEGIN TRANSMISSION ---
+
+From: agent_x@darknet.onion
+To: handler@shadow.ops
+Subject: Mission Complete
+
+Gur cnpxntr unf orra qryvirerq.
+Bhe bcrengvba jnf n fhpprff.
+
+Gur svany pbqr vf: PGS{argjbex_sberfavpf_ceb}
+
+Njnvgvat shegure vafgehpgvbaf.
+
+- Ntrag K
+
+--- END TRANSMISSION ---

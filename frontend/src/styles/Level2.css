@@ -5,7 +5,7 @@
 }
 
 .level2-container {
-    min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
     background: linear-gradient(to bottom right, #111827, #581c87, #111827);
     color: white;
     position: relative;

@@ -1,0 +1,188 @@
+/* Transmission.css */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+.transmission-container {
+    font-family: 'Share Tech Mono', monospace;
+    position: relative;
+    background-color: #050505;
+    /* Use dynamic viewport height to avoid mobile address-bar jumps */
+    min-height: calc(var(--vh, 1vh) * 100);
+    overflow-x: hidden;
+}
+
+/* --- Phase 0: Common CRT Effects --- */
+.crt-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: calc(var(--vh, 1vh) * 100);
+    background:
+        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.scanline {
+    width: 100%;
+    height: 10px;
+    background: rgba(0, 255, 0, 0.1);
+    opacity: 0.1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    animation: scanline 6s linear infinite;
+    pointer-events: none;
+    z-index: 101;
+}
+
+@keyframes scanline {
+    0% {
+        transform: translateY(calc(var(--vh, 1vh) * -100));
+    }
+
+    100% {
+        transform: translateY(calc(var(--vh, 1vh) * 100));
+    }
+}
+
+/* --- Phase 1: Loading Sequence --- */
+.loading-phase {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    /* Align to bottom like a terminal boot */
+    padding: 2rem;
+    height: calc(var(--vh, 1vh) * 100);
+    box-sizing: border-box;
+    color: #0f0;
+    text-shadow: 0 0 5px #0f0;
+}
+
+.log-entry {
+    margin: 5px 0;
+    opacity: 0;
+    animation: slideIn 0.2s forwards;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.log-entry.success {
+    color: #0f0;
+}
+
+.log-entry.warning {
+    color: #fe0;
+}
+
+.log-entry.error {
+    color: #f00;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+
+
+/* --- Phase 3: Transmission --- */
+.transmission-content {
+    max-width: 800px;
+    width: 100%;
+    position: relative;
+    z-index: 20;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+.typing-text {
+    white-space: pre-wrap;
+    line-height: 1.6;
+    font-size: 1.1rem;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+.cursor-blink {
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.action-buttons {
+    margin-top: 50px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    animation: fadeIn 1s ease-in;
+}
+
+.btn-cyber {
+    background: transparent;
+    border: 1px solid #00ff00;
+    color: #00ff00;
+    padding: 15px 40px;
+    font-family: inherit;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-cyber::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 255, 0, 0.1);
+    transition: left 0.3s ease;
+}
+
+.btn-cyber:hover::before {
+    left: 0;
+}
+
+.btn-cyber:hover {
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+    text-shadow: 0 0 5px #00ff00;
+}
+
+.btn-cyber.danger {
+    border-color: #ff4444;
+    color: #ff4444;
+}
+
+.btn-cyber.danger::before {
+    background: rgba(255, 68, 68, 0.1);
+}
+
+.btn-cyber.danger:hover {
+    box-shadow: 0 0 15px rgba(255, 68, 68, 0.5);
+    text-shadow: 0 0 5px #ff4444;
+}

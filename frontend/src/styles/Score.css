@@ -12,7 +12,7 @@ body {
 
 /* ==================== CONTAINER ==================== */
 .scoreboard-container {
-  min-height: 100vh;
+  min-height: calc(var(--vh, 1vh) * 100);
   background: #0a0e27;
   color: #fff;
   position: relative;
@@ -108,7 +108,7 @@ body {
 
 @keyframes particleFloat {
   0% {
-    transform: translateY(100vh) scale(0);
+    transform: translateY(calc(var(--vh, 1vh) * 100)) scale(0);
     opacity: 0;
   }
   10% {

@@ -12,7 +12,7 @@ body {
 
 /* ==================== CONTAINER ==================== */
 .unavailable-container {
-  min-height: 100vh;
+  min-height: calc(var(--vh, 1vh) * 100);
   background: #0a0e27;
   color: #fff;
   position: relative;
@@ -130,7 +130,7 @@ body {
 
 @keyframes errorFloat {
   0% {
-    transform: translateY(100vh) rotate(0deg);
+    transform: translateY(calc(var(--vh, 1vh) * 100)) rotate(0deg);
     opacity: 0;
   }
   10% {

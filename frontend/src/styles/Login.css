@@ -13,7 +13,7 @@ body {
 
 /* ==================== CONTAINER ==================== */
 .login-container {
-  min-height: 100vh;
+  min-height: calc(var(--vh, 1vh) * 100);
   background: #050811;
   color: #fff;
   position: relative;
@@ -709,7 +709,7 @@ body {
     opacity: 1;
   }
   100% {
-    transform: translateY(-100vh) scale(1);
+    transform: translateY(calc(var(--vh, 1vh) * -100)) scale(1);
     opacity: 0;
   }
 }

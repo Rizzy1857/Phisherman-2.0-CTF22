@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Trophy, Lock, Unlock, CheckCircle, XCircle, Shield, ExternalLink, Eye, EyeOff, AlertTriangle } from 'lucide-react';
 import '../styles/Level2.css';
 import { useNavigate } from 'react-router-dom';
+import config from '../config'
 
 const Level2 = ({ userInfo, level2Solved }) => {
   const navigate = useNavigate();

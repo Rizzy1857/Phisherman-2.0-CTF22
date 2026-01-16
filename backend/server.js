@@ -13,7 +13,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, '.env') });
+console.log(`[DEBUG] Level 2 Flag Loaded: ${process.env.LEVEL2_FLAG ? "YES" : "NO"}`);
 
 const app = express()
 app.use(cors({
