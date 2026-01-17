@@ -49,12 +49,12 @@ These challenges are accessed via the **Flags** dashboard.
 ## Level 2: Web Exploitation (Juice Shop)
 
 *   **Type**: Real-world SQL Injection
-*   **Target**: Linked OWASP Juice Shop instance.
+*   **Target**: Linked OWASP Juice Shop instance (or simulated environment).
 *   **Solution**:
-    1.  Navigate to the Login page.
+    1.  Navigate to the Login page of the Juice Shop.
     2.  Use SQL Injection in the email field: `' OR 1=1 --`
-    3.  Password can be anything.
-    4.  *(Note: For this CTF simulation, the flag is hardcoded or provided upon successful "simulated" detection, but in the real Juice Shop, this logs you in as Admin).*
+    3.  Password can be anything (e.g., `admin`).
+    4.  Upon successful bypass, the system detects the "Admin" login.
 *   **Flag**: `PHISH{juice_shop_sql_master}`
 
 ---
@@ -76,3 +76,18 @@ These challenges are accessed via the **Flags** dashboard.
     5.  **Part 3 (`p3`)**: Base64 encoded is "VzFu".
         *   Decode "VzFu" -> `W1n`.
 *   **Final Flag**: `PHISH{R3v_Eng_W1n}`
+
+---
+
+## Level 4: The Source
+
+*   **Type**: Expert / Web Forensics
+*   **Challenge**: "The Source" - Follow the trail.
+*   **Description**: A final challenge hinting at "The Source" and "Hidden in plain sight".
+*   **Solution**:
+    1.  The challenge title "The Source" is a strong hint.
+    2.  The solution is to find the hidden credential in the source code or by following the "View Source" methodology.
+    3.  This refers to the classic CTF trope where the flag is hidden in the client-side code (HTML/JS) or comments.
+*   **Flag**: `CTF{view_source_is_still_op}`
+
+---
